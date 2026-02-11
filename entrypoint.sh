@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+echo "Starting entrypoint script for OpenClaw Gateway"
+
 gh auth setup-git
 echo "Configured git authentication for GitHub CLI"
 
