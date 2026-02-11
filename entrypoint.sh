@@ -3,5 +3,5 @@ set -e
 
 gh auth setup-git
 
-# Execute the original command
-exec "$@"
+# Execute the original entrypoint with all arguments
+exec docker-entrypoint.sh "$@"
