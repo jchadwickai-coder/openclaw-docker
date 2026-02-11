@@ -28,6 +28,18 @@ services:
     cap_add:
       - SYS_ADMIN
 
+  cli:
+    image: ubuntu:22.04
+    container_name: openclaw-cli
+    restart: unless-stopped
+    command: sleep infinity
+    environment:
+      - HOME=/home/node
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    volumes:
+      - openclaw-data:/home/node/.openclaw
+
   syncthing:
     image: syncthing/syncthing:latest
     container_name: openclaw-syncthing
