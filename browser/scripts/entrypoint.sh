@@ -11,7 +11,15 @@ set -e
   --disable-dev-shm-usage \
   --disable-software-rasterizer \
   --disable-setuid-sandbox \
-  "$@" &
+  --log-level=3 \
+  --disable-breakpad \
+  --disable-sync \
+  --disable-features=TranslateUI \
+  --disable-background-networking \
+  --disable-default-apps \
+  --metrics-recording-only \
+  --mute-audio \
+  "$@" 2>/dev/null &
 
 CHROME_PID=$!
 
