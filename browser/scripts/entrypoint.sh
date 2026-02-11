@@ -1,7 +1,10 @@
 #!/bin/bash
 set -e
 
+echo "Starting OpenClaw Browser Service..."
+
 # Start Chrome on port 19222 (internal) in the background
+echo "Starting Chrome with remote debugging on port 19222..."
 /usr/local/bin/chrome \
   --headless=new \
   --remote-debugging-port=19222 \
@@ -22,14 +25,18 @@ set -e
   "$@" 2>/dev/null &
 
 CHROME_PID=$!
+echo "Chrome started (PID: $CHROME_PID)"
 
 # Wait for Chrome to start
 sleep 2
 
 # Start nginx reverse proxy (rewrites Host header to localhost)
+echo "Starting nginx reverse proxy on port 9222..."
 nginx -g 'daemon off;' &
 
 NGINX_PID=$!
+echo "Nginx started (PID: $NGINX_PID)"
+echo "Browser service ready - Chrome remote debugging available at port 9222"
 
 # Wait for either process to exit
 wait -n $CHROME_PID $NGINX_PID

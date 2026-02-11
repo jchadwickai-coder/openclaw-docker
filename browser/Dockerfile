@@ -13,8 +13,8 @@ RUN CHROME_BIN=$(find /ms-playwright -name chrome -type f | head -n 1) && \
     ln -s "${CHROME_BIN}" /usr/local/bin/chrome
 
 # Copy nginx config and entrypoint script
-COPY browser/nginx.conf /etc/nginx/nginx.conf
-COPY browser/scripts/entrypoint.sh /entrypoint.sh
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 EXPOSE 9222

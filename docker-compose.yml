@@ -16,10 +16,10 @@ services:
     volumes:
       - openclaw-data:/home/node/.openclaw
 
-  openclaw-browser:
+  browser:
     build:
-      context: .
-      dockerfile: Dockerfile.browser
+      context: ./browser
+      dockerfile: Dockerfile
     container_name: openclaw-browser
     restart: unless-stopped
     ports:
