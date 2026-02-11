@@ -28,9 +28,6 @@ services:
       - openclaw-data:/data:rw
       - syncthing-config:/var/syncthing
       - ./syncthing/.stignore:/data/workspace/.stignore:ro
-      - ./syncthing/config.xml:/config-template/config.xml:ro
-      - ./syncthing/init.sh:/init.sh:ro
-    entrypoint: ["/bin/sh", "/init.sh"]
     ports:
       - "8384:8384"     # Web UI
       - "22000:22000/tcp" # TCP file transfers

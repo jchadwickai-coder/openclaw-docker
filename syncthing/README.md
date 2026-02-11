@@ -10,11 +10,17 @@ This directory contains configuration for syncing the OpenClaw workspace directo
    ```
 
 2. Access the Syncthing Web UI:
-   - Open http://localhost:8384
-   - The workspace folder is **already configured** as "OpenClaw Workspace" (`/data/workspace`)
+   - Open http://localhost:8384 (or your server's IP:8384)
+   - Complete the initial setup if prompted
 
-3. Add remote devices:
-   - In the Syncthing Web UI, click "Add Remote Device"
+3. Configure the workspace folder:
+   - Click "Add Folder"
+   - Set Folder Path to: `/data/workspace`
+   - Give it a label like "OpenClaw Workspace"
+   - Click "Save"
+
+4. Add remote devices:
+   - Click "Add Remote Device"
    - Enter the Device ID of the device you want to sync with
    - Share the "OpenClaw Workspace" folder with that device
    - Accept the connection on the remote device
