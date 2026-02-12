@@ -12,8 +12,9 @@ RUN CHROME_BIN=$(find /ms-playwright -name chrome -type f | head -n 1) && \
     echo "export CHROME_BIN=${CHROME_BIN}" >> /etc/profile && \
     ln -s "${CHROME_BIN}" /usr/local/bin/chrome
 
-# Copy nginx config and entrypoint script
+# Copy nginx config, proxy script, and entrypoint script
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY scripts/proxy-rewriter.js /usr/local/bin/proxy-rewriter.js
 COPY scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
