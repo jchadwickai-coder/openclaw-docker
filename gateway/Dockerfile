@@ -1,6 +1,6 @@
 FROM ghcr.io/openclaw/openclaw:2026.2.9
 
-# Install gh CLI and Bitwarden CLI
+# Install gh CLI, Bitwarden CLI, and uv
 USER root
 RUN apt-get update && \
     apt-get install -y curl unzip && \
@@ -15,6 +15,10 @@ RUN apt-get update && \
     chmod +x bw && \
     mv bw /usr/local/bin/bw && \
     rm bw.zip && \
+    # Install uv
+    curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    mv /root/.local/bin/uv /usr/local/bin/uv && \
+    mv /root/.local/bin/uvx /usr/local/bin/uvx && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
