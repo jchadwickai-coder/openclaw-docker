@@ -9,6 +9,8 @@ services:
     restart: unless-stopped
     init: true
     user: "1000:1000"
+    ports:
+      - 18789:18789
     environment:
       - HOME=/home/node
       - BRAVE_API_KEY=${BRAVE_API_KEY}
@@ -32,18 +34,6 @@ services:
     shm_size: 2g
     cap_add:
       - SYS_ADMIN
-
-  cli:
-    image: ghcr.io/openclaw/openclaw:2026.2.9
-    container_name: openclaw-cli
-    restart: unless-stopped
-    command: sleep infinity
-    environment:
-      - HOME=/home/node
-      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
-    volumes:
-      - openclaw-data:/home/node/.openclaw
 
   syncthing:
     image: syncthing/syncthing:latest
