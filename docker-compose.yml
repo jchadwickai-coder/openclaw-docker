@@ -10,7 +10,7 @@ services:
     init: true
     user: "1000:1000"
     ports:
-      - 18789:18789
+      - "18789:18789"
     environment:
       - HOME=/home/node
       - BRAVE_API_KEY=${BRAVE_API_KEY}
