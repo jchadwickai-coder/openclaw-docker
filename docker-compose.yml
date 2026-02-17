@@ -46,7 +46,6 @@ services:
     volumes:
       - openclaw-data:/data:rw
       - syncthing-config:/var/syncthing
-      - ./syncthing/.stignore:/data/workspace/.stignore:ro
     ports:
       - "8384:8384"     # Web UI
       - "22000:22000/tcp" # TCP file transfers
