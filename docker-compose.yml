@@ -19,6 +19,7 @@ services:
       - BW_PASSWORD=${BW_PASSWORD}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GOG_KEYRING_PASSWORD=${GOG_KEYRING_PASSWORD}
       - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
     volumes:
       - openclaw-data:/home/node/.openclaw
