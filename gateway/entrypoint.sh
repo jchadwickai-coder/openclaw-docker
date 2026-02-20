@@ -3,9 +3,12 @@ set -e
 
 echo "Starting entrypoint script for OpenClaw Gateway"
 
-gh auth setup-git
-
-echo "Configured git authentication for GitHub CLI"
+if gh auth status > /dev/null 2>&1; then
+    gh auth setup-git
+    echo "Configured git authentication for GitHub CLI"
+else
+    echo "No GitHub CLI auth detected; skipping gh auth setup-git"
+fi
 
 # Configure Bitwarden CLI if credentials are provided
 if [ -n "$BW_CLIENTID" ] && [ -n "$BW_CLIENTSECRET" ]; then
