@@ -2,6 +2,8 @@
 set -euo pipefail
 
 echo "Starting entrypoint script for OpenClaw Gateway"
+export NPM_CONFIG_PREFIX="${NPM_CONFIG_PREFIX:-/home/node/.npm-global}"
+export PATH="${NPM_CONFIG_PREFIX}/bin:${PATH}"
 
 GH_PID=""
 BW_PID=""
