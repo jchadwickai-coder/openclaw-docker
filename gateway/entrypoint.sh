@@ -76,7 +76,13 @@ start_gateway() {
     fi
 
     if [ -z "${openclaw_bin:-}" ] || [ ! -x "$openclaw_bin" ]; then
-        echo "Error: openclaw binary not found. Checked ${NPM_CONFIG_PREFIX}/bin/openclaw and PATH."
+        echo "openclaw binary not found; running npm install..."
+        npm install -g @openclaw/gateway
+        openclaw_bin="${NPM_CONFIG_PREFIX}/bin/openclaw"
+    fi
+
+    if [ ! -x "$openclaw_bin" ]; then
+        echo "Error: openclaw binary not found after npm install."
         return 127
     fi
 
