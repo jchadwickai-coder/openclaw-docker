@@ -40,11 +40,14 @@ RUN apt-get update && \
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
+# Switch back to the original user and configure npm global install location
+USER node
+ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
+ENV PATH=/home/node/.npm-global/bin:$PATH
+RUN mkdir -p /home/node/.npm-global
+
 # Install openclaw
 RUN npm install -g openclaw@latest
-
-# Switch back to the original user
-USER node
 
 # Use our entrypoint script
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

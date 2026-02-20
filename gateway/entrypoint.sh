@@ -1,51 +1,62 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 echo "Starting entrypoint script for OpenClaw Gateway"
 
-if gh auth status > /dev/null 2>&1; then
-    gh auth setup-git
-    echo "Configured git authentication for GitHub CLI"
-else
-    echo "No GitHub CLI auth detected; skipping gh auth setup-git"
-fi
+GH_PID=""
+BW_PID=""
+GATEWAY_PID=""
 
-# Configure Bitwarden CLI if credentials are provided
-if [ -n "$BW_CLIENTID" ] && [ -n "$BW_CLIENTSECRET" ]; then
+cleanup() {
+    echo "Shutting down processes..."
+    for pid in "$GH_PID" "$BW_PID" "$GATEWAY_PID"; do
+        if [ -n "${pid:-}" ] && kill -0 "$pid" 2>/dev/null; then
+            kill "$pid" 2>/dev/null || true
+        fi
+    done
+    wait || true
+}
+
+trap cleanup SIGINT SIGTERM
+
+start_gh() {
+    if gh auth status >/dev/null 2>&1; then
+        gh auth setup-git
+        echo "Configured git authentication for GitHub CLI"
+    else
+        echo "No GitHub CLI auth detected; skipping gh auth setup-git"
+    fi
+}
+
+start_bitwarden() {
+    if [ -z "${BW_CLIENTID:-}" ] || [ -z "${BW_CLIENTSECRET:-}" ]; then
+        echo "Bitwarden credentials not provided; skipping Bitwarden setup"
+        return 0
+    fi
+
     echo "Configuring Bitwarden CLI..."
 
-    # Set server if custom server is provided
-    if [ -n "$BW_SERVER" ]; then
+    if [ -n "${BW_SERVER:-}" ]; then
         bw config server "$BW_SERVER"
     fi
 
-    # Check if already logged in
-    if ! bw login --check > /dev/null 2>&1; then
-        # Login with API key via stdin
+    if ! bw login --check >/dev/null 2>&1; then
         echo "Logging in to Bitwarden with API key..."
-        echo -e "$BW_CLIENTID\n$BW_CLIENTSECRET" | bw login --apikey > /dev/null
+        printf "%s\n%s\n" "$BW_CLIENTID" "$BW_CLIENTSECRET" | bw login --apikey >/dev/null
     else
         echo "Already logged in to Bitwarden"
     fi
 
-    # Unlock vault and export session key
-    if [ -n "$BW_PASSWORD" ]; then
+    if [ -n "${BW_PASSWORD:-}" ]; then
         echo "Unlocking Bitwarden vault..."
-
-        # Create temporary password file
-        printf "%s" "$BW_PASSWORD" > /tmp/bw_password
+        printf "%s" "$BW_PASSWORD" >/tmp/bw_password
         chmod 600 /tmp/bw_password
 
-        # Unlock and capture session key
-        BW_SESSION_VALUE=$(bw unlock --passwordfile /tmp/bw_password --raw)
-
-        # Clean up password file
+        BW_SESSION_VALUE="$(bw unlock --passwordfile /tmp/bw_password --raw || true)"
         rm -f /tmp/bw_password
 
         if [ -n "$BW_SESSION_VALUE" ]; then
-            export BW_SESSION="$BW_SESSION_VALUE"
-            # Also write to profile so it's available in interactive shells
-            echo "export BW_SESSION='$BW_SESSION_VALUE'" >> /home/node/.bashrc
+            echo "export BW_SESSION='$BW_SESSION_VALUE'" >>/home/node/.bashrc
             echo "Bitwarden vault unlocked successfully"
         else
             echo "Error: Failed to unlock vault"
@@ -53,8 +64,20 @@ if [ -n "$BW_CLIENTID" ] && [ -n "$BW_CLIENTSECRET" ]; then
     else
         echo "Warning: BW_PASSWORD not set. Vault will need to be unlocked manually."
     fi
-fi
+}
 
-echo "Starting OpenClaw Gateway..."
+start_gateway() {
+    echo "Starting OpenClaw Gateway..."
+    openclaw gateway --allow-unconfigured
+}
 
-exec openclaw gateway --allow-unconfigured
+start_gh &
+GH_PID=$!
+
+start_bitwarden &
+BW_PID=$!
+
+start_gateway &
+GATEWAY_PID=$!
+
+wait "$GATEWAY_PID"
