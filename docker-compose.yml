@@ -22,7 +22,7 @@ services:
       - GOG_KEYRING_PASSWORD=${GOG_KEYRING_PASSWORD}
       - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
     volumes:
-      - openclaw-data:/home/node/.openclaw
+      - openclaw-data:/home/node
 
   browser:
     build:
